@@ -650,6 +650,17 @@ body {
 
         <!-- 图片参数 -->
         <div class="param-row" id="image-params" style="display: none;">
+          <div class="param-item" style="min-width: 100%;">
+            <label data-lang-key="reference_image_label">参考图</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" id="image-reference" placeholder="输入参考图片的 URL，多个用 | 分隔" style="flex: 1;">
+              <label style="display: inline-flex; align-items: center; padding: 6px 12px; background: var(--p); color: white; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                📁 选择文件
+                <input type="file" id="image-upload" accept="image/*" style="display: none;" multiple>
+              </label>
+            </div>
+            <div id="image-preview" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;"></div>
+          </div>
           <div class="param-item">
             <label data-lang-key="width_label">宽度</label>
             <input type="number" id="image-width" value="1024" min="256" max="4096">
@@ -697,6 +708,17 @@ body {
 
         <!-- 视频参数 -->
         <div class="param-row" id="video-params" style="display: none;">
+          <div class="param-item" style="min-width: 100%;">
+            <label data-lang-key="reference_image_label">参考图</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" id="video-reference" placeholder="起始帧 | 结束帧 (veo支持双参考图，多图用 | 分隔)" style="flex: 1;">
+              <label style="display: inline-flex; align-items: center; padding: 6px 12px; background: var(--p); color: white; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                📁 选择文件
+                <input type="file" id="video-upload" accept="image/*" style="display: none;" multiple>
+              </label>
+            </div>
+            <div id="video-preview" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;"></div>
+          </div>
           <div class="param-item">
             <label data-lang-key="duration_label">时长 (秒)</label>
             <input type="number" id="video-duration" value="10" min="2" max="60">
