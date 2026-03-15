@@ -213,24 +213,40 @@
 
         // 渲染历史记录
         function renderHistory() {
+            console.log('Rendering history...');
+            
+            // 确保DOM完全加载
+            if (document.readyState !== 'complete') {
+                console.log('DOM not ready, waiting...');
+                setTimeout(renderHistory, 100);
+                return;
+            }
+            
             const historyItems = document.getElementById('history-items');
             const historyEmpty = document.getElementById('history-empty');
 
             if (!historyItems || !historyEmpty) {
-                setTimeout(renderHistory, 50);
+                console.log('History elements not found, will not retry');
                 return;
             }
+
+            console.log('History items element found:', historyItems);
+            console.log('History empty element found:', historyEmpty);
 
             if (historyRecords.length === 0) {
                 historyEmpty.style.display = 'block';
                 historyItems.innerHTML = '';
+                console.log('History is empty');
                 return;
             }
 
             historyEmpty.style.display = 'none';
             historyItems.innerHTML = '';
 
+            console.log('Rendering', historyRecords.length, 'history records');
+
             historyRecords.forEach(record => {
+                console.log('Rendering record:', record.id);
                 const historyItem = document.createElement('div');
                 historyItem.className = 'history-item';
                 historyItem.dataset.id = record.id;
@@ -260,8 +276,28 @@
                             <div class="history-item-time">${time}</div>
                         </div>
                     </div>
-                    <button class="history-item-delete" onclick="deleteHistoryItem('${record.id}')">×</button>
+                    <button class="history-item-delete" data-id="${record.id}">×</button>
                 `;
+
+                // 添加点击事件到整个历史项
+                historyItem.addEventListener('click', function(e) {
+                    console.log('History item clicked:', e.target);
+                    // 处理历史项点击
+                    console.log('History item content clicked, loading record:', record.id);
+                    loadHistoryItem(record);
+                });
+                
+                // 单独为删除按钮添加点击事件
+                const deleteBtn = historyItem.querySelector('.history-item-delete');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', function(e) {
+                        e.stopPropagation(); // 阻止事件冒泡
+                        console.log('Delete button clicked:', e.target);
+                        const id = deleteBtn.dataset.id;
+                        console.log('Delete button clicked, id:', id);
+                        deleteHistoryItem(id);
+                    });
+                }
 
                 historyItems.appendChild(historyItem);
             });
@@ -280,9 +316,26 @@
 
         // 删除历史记录
         function deleteHistoryItem(id) {
+            console.log('Deleting history item:', id);
             historyRecords = historyRecords.filter(record => record.id !== id);
             localStorage.setItem('pollinationsHistory', JSON.stringify(historyRecords));
-            renderHistory();
+            console.log('History updated');
+            
+            // 通知父窗口历史记录已更新
+            if (window.parent && window.parent !== window) {
+                try {
+                    window.parent.postMessage({
+                        type: 'historyUpdated'
+                    }, '*');
+                    console.log('History updated message sent to parent');
+                } catch (e) {
+                    console.error('Error sending history updated message:', e);
+                }
+            }
+            
+            // 刷新页面以显示更新后的历史记录
+            console.log('Refreshing page to show updated history');
+            window.location.reload();
         }
 
         // 清空历史记录
@@ -290,7 +343,22 @@
             if (confirm('确定要清空所有历史记录吗？')) {
                 historyRecords = [];
                 localStorage.removeItem('pollinationsHistory');
+                console.log('History cleared');
+                
+                // 通知父窗口历史记录已更新
+                if (window.parent && window.parent !== window) {
+                    try {
+                        window.parent.postMessage({
+                            type: 'historyUpdated'
+                        }, '*');
+                        console.log('History updated message sent to parent');
+                    } catch (e) {
+                        console.error('Error sending history updated message:', e);
+                    }
+                }
+                
                 // 强制刷新页面以确保显示为空
+                console.log('Refreshing page to show empty history');
                 window.location.reload();
             }
         }
@@ -308,6 +376,28 @@
                 renderHistory();
             }
         });
+
+        // 加载历史记录项到主窗口
+        function loadHistoryItem(record) {
+            console.log('Loading history item:', record.id);
+            console.log('Window parent exists:', !!window.parent);
+            console.log('Window top exists:', !!window.top);
+            // 发送消息给父窗口
+            if (window.parent && window.parent !== window) {
+                console.log('Sending message to parent window');
+                try {
+                    window.parent.postMessage({
+                        type: 'loadHistoryItem',
+                        record: record
+                    }, '*');
+                    console.log('Message sent successfully');
+                } catch (e) {
+                    console.error('Error sending message:', e);
+                }
+            } else {
+                console.log('No parent window found or window is self');
+            }
+        }
 
         // 暴露刷新方法给父窗口
         window.refreshHistory = function() {
