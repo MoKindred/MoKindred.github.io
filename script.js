@@ -1529,14 +1529,15 @@ function refreshHistoryIframe() {
   console.log('Refreshing history iframe...');
   const iframe = document.getElementById('history-iframe');
   if (iframe) {
-    // 重新加载iframe
+    // 避免直接访问contentWindow，使用src属性刷新
     try {
-      iframe.contentWindow.location.reload();
-      console.log('History iframe refreshed');
+      // 给src添加一个时间戳参数，强制刷新
+      const timestamp = new Date().getTime();
+      const src = iframe.src.split('?')[0];
+      iframe.src = src + '?t=' + timestamp;
+      console.log('History iframe refreshed by changing src');
     } catch (e) {
       console.error('Error refreshing iframe:', e);
-      // 如果iframe跨域或其他原因导致错误，尝试直接修改iframe的src
-      iframe.src = iframe.src;
     }
   } else {
     console.error('History iframe not found');
@@ -1647,6 +1648,20 @@ document.addEventListener('DOMContentLoaded', function() {
     historyRecords = JSON.parse(localStorage.getItem('pollinationsHistory')) || [];
     console.log('Initial history records:', historyRecords.length);
   }, 100);
+  
+  // 监听来自iframe的消息
+  window.addEventListener('message', function(e) {
+    console.log('Received message:', e.data);
+    if (e.data.type === 'loadHistoryItem') {
+      console.log('Received loadHistoryItem message:', e.data.record);
+      loadHistoryItem(e.data.record);
+    } else if (e.data.type === 'historyUpdated') {
+      console.log('Received historyUpdated message, refreshing history');
+      // 刷新历史记录
+      historyRecords = JSON.parse(localStorage.getItem('pollinationsHistory')) || [];
+      console.log('Updated history records:', historyRecords.length);
+    }
+  });
 });
 
 // 全局变量用于存储当前生成的参数
