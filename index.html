@@ -30,18 +30,19 @@
   --border: 1px solid rgba(255, 255, 255, 0.1);
 }
 body {
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 20px;
-  background-attachment: fixed;
-  position: relative;
-  overflow-x: hidden;
+  background-color: var(--bg);
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: center center;
+  background-attachment: fixed;
+  background-repeat: repeat;
+  color: var(--text);
+  min-height: 100vh;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
 }
 
 /* 背景装饰 */
@@ -1815,15 +1816,7 @@ footer a:last-child:hover::before {
   <div class="right-panel">
     <!-- 历史缓存区 -->
     <div class="history-panel" id="history-panel">
-      <div class="history-header">
-        <h3 data-lang-key="history_title">历史生成</h3>
-        <button id="clear-history" class="btn-clear-history" data-lang-key="clear_history_btn">清空历史</button>
-      </div>
-      <div class="history-items" id="history-items">
-        <div class="history-empty" id="history-empty">
-          <p data-lang-key="history_empty">暂无历史记录</p>
-        </div>
-      </div>
+      <iframe id="history-iframe" src="history.html" style="width: 100%; height: 250px; border: none; border-radius: var(--radius);"></iframe>
     </div>
     <div class="result" id="result"></div>
   </div>
