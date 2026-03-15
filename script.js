@@ -124,7 +124,21 @@ const translations = {
     browser_not_support_video: "你的浏览器不支持视频播放",
     browser_not_support_audio: "你的浏览器不支持音频播放",
     no_result: "无返回结果",
-    generating_failed: "生成失败"
+    generating_failed: "生成失败",
+    history_title: "历史生成",
+    clear_history_btn: "清空历史",
+    history_empty: "暂无历史记录",
+    type_text: "文本",
+    type_image: "图片",
+    type_video: "视频",
+    type_audio: "音频",
+    confirm_clear_history: "确定要清空所有历史记录吗？",
+    please_wait: "请耐心等待，生成过程可能需要几秒钟时间",
+    please_wait_image: "请耐心等待，图片生成可能需要几秒钟时间",
+    please_wait_video: "请耐心等待，视频生成可能需要几秒钟时间",
+    please_wait_audio: "请耐心等待，音频生成可能需要几秒钟时间",
+    built_with: "基于 Pollinations AI 构建",
+    visit_official_website: "访问官方网站"
   },
   en: {
     title: "Pollinations AI All-in-One Generation",
@@ -234,7 +248,21 @@ const translations = {
     browser_not_support_video: "Your browser does not support video playback",
     browser_not_support_audio: "Your browser does not support audio playback",
     no_result: "No results returned",
-    generating_failed: "Generation failed"
+    generating_failed: "Generation failed",
+    history_title: "History",
+    clear_history_btn: "Clear History",
+    history_empty: "No history records",
+    type_text: "Text",
+    type_image: "Image",
+    type_video: "Video",
+    type_audio: "Audio",
+    confirm_clear_history: "Are you sure you want to clear all history records?",
+    please_wait: "Please wait, the generation process may take a few seconds",
+    please_wait_image: "Please wait, image generation may take a few seconds",
+    please_wait_video: "Please wait, video generation may take a few seconds",
+    please_wait_audio: "Please wait, audio generation may take a few seconds",
+    built_with: "Built with Pollinations AI",
+    visit_official_website: "Visit Official Website"
   }
 };
 
@@ -1017,7 +1045,7 @@ document.getElementById("generate").addEventListener("click", async () => {
     <div class="loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px;">
       <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255, 0.3); border-radius: 50%; border-top-color: var(--p); animation: spin 1s ease-in-out infinite; margin-bottom: 16px;"></div>
       <div>${loadingText}</div>
-      <div style="font-size: 12px; color: var(--gray); margin-top: 8px;">请耐心等待，生成过程可能需要几秒钟时间</div>
+      <div style="font-size: 12px; color: var(--gray); margin-top: 8px;">${translations[t].please_wait}</div>
     </div>
     <style>
       @keyframes spin {
@@ -1116,7 +1144,7 @@ document.getElementById("generate").addEventListener("click", async () => {
           <div id="image-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px;">
             <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255, 0.3); border-radius: 50%; border-top-color: var(--p); animation: spin 1s ease-in-out infinite; margin-bottom: 16px;"></div>
             <div>${translations[t].generating_image}</div>
-            <div style="font-size: 12px; color: var(--gray); margin-top: 8px;">请耐心等待，图片生成可能需要几秒钟时间</div>
+            <div style="font-size: 12px; color: var(--gray); margin-top: 8px;">${translations[t].please_wait_image}</div>
           </div>
           <div id="image-container" style="display: none;">
             <img id="generated-image" alt="${t === 'zh' ? 'Pollinations生成图片' : 'Pollinations Generated Image'}">
@@ -1185,12 +1213,12 @@ document.getElementById("generate").addEventListener("click", async () => {
       res.innerHTML = `
         <div class="media-container">
           <div class="media-info">
-            ${translations[t].using_model}: ${selectedModel} | ${translations[t].duration}: ${duration}s | ${translations[t].resolution}: ${resolution} | ${translations[t].fps}: ${fps} | 宽高比: ${aspectRatio}
+            ${translations[t].using_model}: ${selectedModel} | ${translations[t].duration}: ${duration}s | ${translations[t].resolution}: ${resolution} | ${translations[t].fps}: ${fps} | ${translations[t].aspect_ratio_label}: ${aspectRatio}
           </div>
           <div id="video-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px;">
             <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255, 0.3); border-radius: 50%; border-top-color: var(--p); animation: spin 1s ease-in-out infinite; margin-bottom: 16px;"></div>
             <div>${translations[t].generating_video}</div>
-            <div style="font-size: 12px; color: var(--gray); margin-top: 8px;">请耐心等待，视频生成可能需要几秒钟时间</div>
+            <div style="font-size: 12px; color: var(--gray); margin-top: 8px;">${translations[t].please_wait_video}</div>
           </div>
           <div id="video-container" style="display: none;">
             <video controls src="${url}" poster="${posterUrl}" style="max-width: 100%; border-radius: 8px; margin-bottom: 12px;">
@@ -1255,12 +1283,12 @@ document.getElementById("generate").addEventListener("click", async () => {
       res.innerHTML = `
         <div class="media-container">
           <div class="media-info">
-            ${translations[t].using_model}: ${selectedModel} | ${translations[t].duration}: ${duration}s | ${translations[t].voice}: ${voice} | ${translations[t].format}: ${format} | 语速: ${speed}
+            ${translations[t].using_model}: ${selectedModel} | ${translations[t].duration}: ${duration}s | ${translations[t].voice}: ${voice} | ${translations[t].format}: ${format} | ${translations[t].speed_label}: ${speed}
           </div>
           <div id="audio-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px;">
             <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255, 0.3); border-radius: 50%; border-top-color: var(--p); animation: spin 1s ease-in-out infinite; margin-bottom: 16px;"></div>
             <div>${translations[t].generating_audio}</div>
-            <div style="font-size: 12px; color: var(--gray); margin-top: 8px;">请耐心等待，音频生成可能需要几秒钟时间</div>
+            <div style="font-size: 12px; color: var(--gray); margin-top: 8px;">${translations[t].please_wait_audio}</div>
           </div>
           <div id="audio-container" style="display: none;">
             <audio controls src="${url}" style="width: 100%; margin-bottom: 12px;">
@@ -1320,7 +1348,7 @@ function renderChatHistory() {
   
   chatHistory.forEach(message => {
     const isUser = message.role === "user";
-    const avatarText = isUser ? "你" : "AI";
+    const avatarText = isUser ? (currentLang === "zh" ? "你" : "You") : "AI";
     const timestamp = new Date(message.timestamp).toLocaleTimeString();
     
     chatHtml += `
@@ -1430,5 +1458,251 @@ function init() {
     handleFileUpload(videoUpload, videoReference, videoPreview);
   }
 }
+
+// 历史记录功能
+let historyRecords = JSON.parse(localStorage.getItem('pollinationsHistory')) || [];
+
+function addToHistory(type, prompt, result, model, params) {
+  const record = {
+    id: Date.now() + Math.random().toString(36).substr(2, 9),
+    type: type,
+    prompt: prompt,
+    result: result,
+    model: model,
+    params: params,
+    timestamp: new Date().toISOString()
+  };
+  
+  historyRecords.unshift(record);
+  
+  // 限制历史记录数量为20条
+  if (historyRecords.length > 20) {
+    historyRecords = historyRecords.slice(0, 20);
+  }
+  
+  localStorage.setItem('pollinationsHistory', JSON.stringify(historyRecords));
+  renderHistory();
+}
+
+function renderHistory() {
+  const historyItems = document.getElementById('history-items');
+  const historyEmpty = document.getElementById('history-empty');
+  
+  if (!historyItems || !historyEmpty) return;
+  
+  if (historyRecords.length === 0) {
+    historyEmpty.style.display = 'block';
+    historyItems.innerHTML = '';
+    return;
+  }
+  
+  historyEmpty.style.display = 'none';
+  historyItems.innerHTML = '';
+  
+  historyRecords.forEach(record => {
+    const historyItem = document.createElement('div');
+    historyItem.className = 'history-item';
+    historyItem.dataset.id = record.id;
+    
+    let previewHtml = '';
+    if (record.type === 'image') {
+      previewHtml = `<img src="${record.result}" alt="Generated image">`;
+    } else if (record.type === 'video') {
+      previewHtml = `<video src="${record.result}" muted></video>`;
+    } else if (record.type === 'audio') {
+      previewHtml = `<audio src="${record.result}" controls></audio>`;
+    } else {
+      previewHtml = `<div style="font-size: 12px; padding: 8px; text-align: center;">💬</div>`;
+    }
+    
+    const typeText = translations[currentLang][`type_${record.type}`] || record.type;
+    
+    const time = new Date(record.timestamp).toLocaleString();
+    
+    historyItem.innerHTML = `
+      <div class="history-item-content">
+        <div class="history-item-preview">
+          ${previewHtml}
+        </div>
+        <div class="history-item-info">
+          <div class="history-item-type">${typeText}</div>
+          <div class="history-item-prompt">${record.prompt.substring(0, 50)}${record.prompt.length > 50 ? '...' : ''}</div>
+          <div class="history-item-time">${time}</div>
+        </div>
+      </div>
+      <button class="history-item-delete" onclick="deleteHistoryItem('${record.id}')">×</button>
+    `;
+    
+    historyItem.addEventListener('click', (e) => {
+      if (!e.target.closest('.history-item-delete')) {
+        loadHistoryItem(record);
+      }
+    });
+    
+    historyItems.appendChild(historyItem);
+  });
+}
+
+function loadHistoryItem(record) {
+  // 切换到对应的标签
+  document.querySelectorAll('.tab').forEach(tab => {
+    if (tab.dataset.type === record.type) {
+      tab.click();
+    }
+  });
+  
+  // 填充提示词
+  document.getElementById('prompt').value = record.prompt;
+  
+  // 选择模型
+  const modelSelect = document.getElementById(`${record.type}-model`);
+  if (modelSelect) {
+    modelSelect.value = record.model;
+  }
+  
+  // 填充参数
+  if (record.params) {
+    Object.entries(record.params).forEach(([key, value]) => {
+      const element = document.getElementById(key);
+      if (element) {
+        if (element.type === 'checkbox') {
+          element.checked = value;
+        } else {
+          element.value = value;
+        }
+      }
+    });
+  }
+  
+  // 显示结果
+  const result = document.getElementById('result');
+  if (result) {
+    if (record.type === 'text') {
+      // 对于文本，直接显示内容
+      result.innerHTML = `<div class="chat-container"><div class="chat-message assistant"><div class="chat-avatar assistant">AI</div><div><div class="chat-content">${record.result.replace(/\n/g, '<br>')}</div></div></div></div>`;
+    } else if (record.type === 'image') {
+      result.innerHTML = `
+        <div class="media-container">
+          <div class="media-info">${translations[currentLang].using_model}: ${record.model}</div>
+          <img src="${record.result}" alt="Generated image">
+          <a href="${record.result}" target="_blank" download class="download-btn">📥 ${translations[currentLang].download_image}</a>
+        </div>
+      `;
+    } else if (record.type === 'video') {
+      result.innerHTML = `
+        <div class="media-container">
+          <div class="media-info">${translations[currentLang].using_model}: ${record.model}</div>
+          <video controls src="${record.result}" style="max-width: 100%; border-radius: 8px; margin-bottom: 12px;"></video>
+          <a href="${record.result}" target="_blank" download class="download-btn">📥 ${translations[currentLang].download_video}</a>
+        </div>
+      `;
+    } else if (record.type === 'audio') {
+      result.innerHTML = `
+        <div class="media-container">
+          <div class="media-info">${translations[currentLang].using_model}: ${record.model}</div>
+          <audio controls src="${record.result}" style="width: 100%; margin-bottom: 12px;"></audio>
+          <a href="${record.result}" target="_blank" download class="download-btn">📥 ${translations[currentLang].download_audio}</a>
+        </div>
+      `;
+    }
+  }
+}
+
+function deleteHistoryItem(id) {
+  historyRecords = historyRecords.filter(record => record.id !== id);
+  localStorage.setItem('pollinationsHistory', JSON.stringify(historyRecords));
+  renderHistory();
+}
+
+function clearHistory() {
+  if (confirm(translations[currentLang].confirm_clear_history)) {
+    historyRecords = [];
+    localStorage.removeItem('pollinationsHistory');
+    renderHistory();
+  }
+}
+
+// 为清空历史按钮添加事件监听器
+document.addEventListener('DOMContentLoaded', function() {
+  const clearHistoryBtn = document.getElementById('clear-history');
+  if (clearHistoryBtn) {
+    clearHistoryBtn.addEventListener('click', clearHistory);
+  }
+  
+  // 初始化渲染历史记录
+  renderHistory();
+});
+
+// 修改生成函数，添加历史记录功能
+const originalGenerate = document.getElementById('generate').onclick;
+document.getElementById('generate').onclick = async function() {
+  const prompt = document.getElementById('prompt').value.trim();
+  const modelSelect = document.getElementById(`${currentType}-model`);
+  const selectedModel = modelSelect.value;
+  
+  // 收集参数
+  let params = {};
+  if (currentType === 'text') {
+    params['text-temp'] = document.getElementById('text-temp').value;
+    params['text-tokens'] = document.getElementById('text-tokens').value;
+    params['text-role'] = document.getElementById('text-role').value;
+  } else if (currentType === 'image') {
+    params['image-width'] = document.getElementById('image-width').value;
+    params['image-height'] = document.getElementById('image-height').value;
+    params['image-style'] = document.getElementById('image-style').value;
+    params['image-negative'] = document.getElementById('image-negative').value;
+    params['image-quality'] = document.getElementById('image-quality').value;
+    params['image-seed'] = document.getElementById('image-seed').value;
+    params['image-enhance'] = document.getElementById('image-enhance').checked;
+    params['image-transparent'] = document.getElementById('image-transparent').checked;
+  } else if (currentType === 'video') {
+    params['video-duration'] = document.getElementById('video-duration').value;
+    params['video-res'] = document.getElementById('video-res').value;
+    params['video-fps'] = document.getElementById('video-fps').value;
+    params['video-aspect'] = document.getElementById('video-aspect').value;
+    params['video-audio'] = document.getElementById('video-audio').checked;
+  } else if (currentType === 'audio') {
+    params['audio-duration'] = document.getElementById('audio-duration').value;
+    params['audio-voice'] = document.getElementById('audio-voice').value;
+    params['audio-format'] = document.getElementById('audio-format').value;
+    params['audio-speed'] = document.getElementById('audio-speed').value;
+    params['audio-instrumental'] = document.getElementById('audio-instrumental').checked;
+  }
+  
+  // 调用原始生成函数
+  await originalGenerate.call(this);
+  
+  // 获取生成结果并添加到历史记录
+  const result = document.getElementById('result');
+  if (result && prompt && selectedModel) {
+    let resultData;
+    
+    if (currentType === 'text') {
+      const chatContent = result.querySelector('.chat-message.assistant .chat-content');
+      if (chatContent) {
+        resultData = chatContent.textContent;
+        addToHistory(currentType, prompt, resultData, selectedModel, params);
+      }
+    } else if (currentType === 'image') {
+      const img = result.querySelector('img');
+      if (img && img.src) {
+        resultData = img.src;
+        addToHistory(currentType, prompt, resultData, selectedModel, params);
+      }
+    } else if (currentType === 'video') {
+      const video = result.querySelector('video');
+      if (video && video.src) {
+        resultData = video.src;
+        addToHistory(currentType, prompt, resultData, selectedModel, params);
+      }
+    } else if (currentType === 'audio') {
+      const audio = result.querySelector('audio');
+      if (audio && audio.src) {
+        resultData = audio.src;
+        addToHistory(currentType, prompt, resultData, selectedModel, params);
+      }
+    }
+  }
+};
 
 window.addEventListener('DOMContentLoaded', init);
