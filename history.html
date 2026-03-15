@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史记录</title>
+    <style>
+        :root {
+            --bg: #0F172A;
+            --text: #F1F5F9;
+            --gray: #94A3B8;
+            --p: #4F46E5;
+            --p-hover: #4338CA;
+            --glass: rgba(15, 23, 42, 0.7);
+            --glass-backdrop: blur(10px);
+            --border: 1px solid rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --card-hover: rgba(30, 41, 59, 0.8);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+
+        .history-container {
+            padding: 20px;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: var(--border);
+        }
+
+        .history-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .btn-clear-history {
+            padding: 6px 12px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-clear-history:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .history-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .history-item {
+            background: #273449;
+            border-radius: 8px;
+            padding: 12px;
+            border: var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .history-item:hover {
+            background: #334155;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .history-item-content {
+            display: flex;
+            gap: 12px;
+        }
+
+        .history-item-preview {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #1E293B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-item-preview img,
+        .history-item-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .history-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .history-item-type {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--p);
+            margin-bottom: 4px;
+        }
+
+        .history-item-prompt {
+            font-size: 13px;
+            color: var(--text);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item-time {
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        .history-item-delete {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 14px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .history-item-delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* 滚动条样式 */
+        .history-items::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history-items::-webkit-scrollbar-track {
+            background: #1E293B;
+            border-radius: 3px;
+        }
+
+        .history-items::-webkit-scrollbar-thumb {
+            background: var(--p);
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+
+        .history-items::-webkit-scrollbar-thumb:hover {
+            background: var(--p-hover);
+        }
+    </style>
+</head>
+<body>
+    <div class="history-container">
+        <div class="history-header">
+            <h3>历史生成</h3>
+            <button id="clear-history" class="btn-clear-history">清空历史</button>
+        </div>
+        <div class="history-items" id="history-items">
+            <div class="history-empty" id="history-empty">
+                <p>暂无历史记录</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 历史记录数据
+        let historyRecords = JSON.parse(localStorage.getItem('pollinationsHistory')) || [];
+
+        // 渲染历史记录
+        function renderHistory() {
+            const historyItems = document.getElementById('history-items');
+            const historyEmpty = document.getElementById('history-empty');
+
+            if (!historyItems || !historyEmpty) {
+                setTimeout(renderHistory, 50);
+                return;
+            }
+
+            if (historyRecords.length === 0) {
+                historyEmpty.style.display = 'block';
+                historyItems.innerHTML = '';
+                return;
+            }
+
+            historyEmpty.style.display = 'none';
+            historyItems.innerHTML = '';
+
+            historyRecords.forEach(record => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.dataset.id = record.id;
+
+                let previewHtml = '';
+                if (record.type === 'image') {
+                    previewHtml = `<img src="${record.result}" alt="Generated image">`;
+                } else if (record.type === 'video') {
+                    previewHtml = `<video src="${record.result}" muted></video>`;
+                } else if (record.type === 'audio') {
+                    previewHtml = `<audio src="${record.result}" controls></audio>`;
+                } else {
+                    previewHtml = `<div style="font-size: 12px; padding: 8px; text-align: center;">💬</div>`;
+                }
+
+                const typeText = getTypeText(record.type);
+                const time = new Date(record.timestamp).toLocaleString();
+
+                historyItem.innerHTML = `
+                    <div class="history-item-content">
+                        <div class="history-item-preview">
+                            ${previewHtml}
+                        </div>
+                        <div class="history-item-info">
+                            <div class="history-item-type">${typeText}</div>
+                            <div class="history-item-prompt">${record.prompt.substring(0, 50)}${record.prompt.length > 50 ? '...' : ''}</div>
+                            <div class="history-item-time">${time}</div>
+                        </div>
+                    </div>
+                    <button class="history-item-delete" onclick="deleteHistoryItem('${record.id}')">×</button>
+                `;
+
+                historyItems.appendChild(historyItem);
+            });
+        }
+
+        // 获取类型文本
+        function getTypeText(type) {
+            const types = {
+                text: '文本',
+                image: '图片',
+                video: '视频',
+                audio: '音频'
+            };
+            return types[type] || type;
+        }
+
+        // 删除历史记录
+        function deleteHistoryItem(id) {
+            historyRecords = historyRecords.filter(record => record.id !== id);
+            localStorage.setItem('pollinationsHistory', JSON.stringify(historyRecords));
+            renderHistory();
+        }
+
+        // 清空历史记录
+        function clearHistory() {
+            if (confirm('确定要清空所有历史记录吗？')) {
+                historyRecords = [];
+                localStorage.removeItem('pollinationsHistory');
+                // 强制刷新页面以确保显示为空
+                window.location.reload();
+            }
+        }
+
+        // 为清空按钮添加事件监听器
+        document.getElementById('clear-history').addEventListener('click', clearHistory);
+
+        // 初始渲染
+        renderHistory();
+
+        // 监听localStorage变化
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'pollinationsHistory') {
+                historyRecords = JSON.parse(localStorage.getItem('pollinationsHistory')) || [];
+                renderHistory();
+            }
+        });
+
+        // 暴露刷新方法给父窗口
+        window.refreshHistory = function() {
+            historyRecords = JSON.parse(localStorage.getItem('pollinationsHistory')) || [];
+            renderHistory();
+        };
+    </script>
+</body>
+</html>
