@@ -197,12 +197,12 @@
 <body>
     <div class="history-container">
         <div class="history-header">
-            <h3>历史生成</h3>
+            <h3 id="history-title">历史生成</h3>
             <button id="clear-history" class="btn-clear-history">清空历史</button>
         </div>
         <div class="history-items" id="history-items">
             <div class="history-empty" id="history-empty">
-                <p>暂无历史记录</p>
+                <p id="history-empty-text">暂无历史记录</p>
             </div>
         </div>
     </div>
@@ -210,6 +210,46 @@
     <script>
         // 历史记录数据
         let historyRecords = JSON.parse(localStorage.getItem('pollinationsHistory')) || [];
+        // 当前语言
+        let currentLang = 'zh';
+        
+        // 翻译对象
+        const translations = {
+            zh: {
+                history_title: '历史生成',
+                clear_history_btn: '清空历史',
+                history_empty: '暂无历史记录',
+                type_text: '文本',
+                type_image: '图片',
+                type_video: '视频',
+                type_audio: '音频',
+                confirm_clear_history: '确定要清空所有历史记录吗？'
+            },
+            en: {
+                history_title: 'History',
+                clear_history_btn: 'Clear History',
+                history_empty: 'No history records',
+                type_text: 'Text',
+                type_image: 'Image',
+                type_video: 'Video',
+                type_audio: 'Audio',
+                confirm_clear_history: 'Are you sure you want to clear all history records?'
+            }
+        };
+
+        // 更新文本
+        function updateText() {
+            console.log('Updating text for language:', currentLang);
+            const t = translations[currentLang];
+            
+            const historyTitle = document.getElementById('history-title');
+            const clearHistoryBtn = document.getElementById('clear-history');
+            const historyEmptyText = document.getElementById('history-empty-text');
+            
+            if (historyTitle) historyTitle.textContent = t.history_title;
+            if (clearHistoryBtn) clearHistoryBtn.textContent = t.clear_history_btn;
+            if (historyEmptyText) historyEmptyText.textContent = t.history_empty;
+        }
 
         // 渲染历史记录
         function renderHistory() {
@@ -305,13 +345,7 @@
 
         // 获取类型文本
         function getTypeText(type) {
-            const types = {
-                text: '文本',
-                image: '图片',
-                video: '视频',
-                audio: '音频'
-            };
-            return types[type] || type;
+            return translations[currentLang][`type_${type}`] || type;
         }
 
         // 删除历史记录
@@ -340,7 +374,7 @@
 
         // 清空历史记录
         function clearHistory() {
-            if (confirm('确定要清空所有历史记录吗？')) {
+            if (confirm(translations[currentLang].confirm_clear_history)) {
                 historyRecords = [];
                 localStorage.removeItem('pollinationsHistory');
                 console.log('History cleared');
@@ -367,12 +401,24 @@
         document.getElementById('clear-history').addEventListener('click', clearHistory);
 
         // 初始渲染
+        updateText();
         renderHistory();
 
         // 监听localStorage变化
         window.addEventListener('storage', function(e) {
             if (e.key === 'pollinationsHistory') {
                 historyRecords = JSON.parse(localStorage.getItem('pollinationsHistory')) || [];
+                renderHistory();
+            }
+        });
+
+        // 监听来自父窗口的消息
+        window.addEventListener('message', function(e) {
+            console.log('Received message in history iframe:', e.data);
+            if (e.data.type === 'setLanguage') {
+                console.log('Setting language to:', e.data.lang);
+                currentLang = e.data.lang;
+                updateText();
                 renderHistory();
             }
         });
