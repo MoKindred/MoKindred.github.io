@@ -287,6 +287,27 @@ function switchLanguage(lang) {
     }
   });
   
+  // 更新高级设置中的占位符
+  const imageReference = document.getElementById('image-reference');
+  if (imageReference) {
+    imageReference.placeholder = lang === 'zh' ? '输入参考图片的 URL，多个用 | 分隔' : 'Enter reference image URL, multiple separated by |';
+  }
+  
+  const imageNegative = document.getElementById('image-negative');
+  if (imageNegative) {
+    imageNegative.placeholder = lang === 'zh' ? '例如：模糊, 低质量' : 'e.g., blurry, low quality';
+  }
+  
+  const imageSeed = document.getElementById('image-seed');
+  if (imageSeed) {
+    imageSeed.placeholder = lang === 'zh' ? '留空为随机' : 'Leave blank for random';
+  }
+  
+  const videoReference = document.getElementById('video-reference');
+  if (videoReference) {
+    videoReference.placeholder = lang === 'zh' ? '起始帧 | 结束帧 (veo支持双参考图，多图用 | 分隔)' : 'Start frame | End frame (veo supports dual reference images, multiple separated by |)';
+  }
+  
   document.querySelectorAll('.model-select option[value=""]').forEach(el => {
     el.textContent = translations[lang].select_model_default;
   });
@@ -301,6 +322,20 @@ function switchLanguage(lang) {
   document.getElementById('generate').textContent = translations[lang].generate_btn;
   
   updateModelMetadata(currentType);
+  
+  // 通知历史记录iframe更新语言
+  const historyIframe = document.getElementById('history-iframe');
+  if (historyIframe && historyIframe.contentWindow) {
+    try {
+      historyIframe.contentWindow.postMessage({
+        type: 'setLanguage',
+        lang: lang
+      }, '*');
+      console.log('Language change message sent to history iframe');
+    } catch (e) {
+      console.error('Error sending language change message:', e);
+    }
+  }
 }
 
 document.querySelectorAll('.lang-btn').forEach(btn => {
