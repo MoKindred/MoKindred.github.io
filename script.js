@@ -400,23 +400,42 @@ function checkForApiKey() {
 
 // 从localStorage加载API key
 function loadApiKeyFromStorage() {
-  console.log('Loading API key from localStorage...');
-  const storedApiKey = localStorage.getItem('pollinationsApiKey');
-  console.log('Found stored API key:', storedApiKey);
-  
-  if (storedApiKey) {
-    const apiKeyInput = document.getElementById('apiKey');
-    if (apiKeyInput) {
-      console.log('Found apiKey input element, setting value...');
-      apiKeyInput.value = storedApiKey;
-    } else {
-      console.error('apiKey input element not found');
+  console.log('=== Loading API key from localStorage ===');
+  try {
+    const storedApiKey = localStorage.getItem('pollinationsApiKey');
+    console.log('Found stored API key:', storedApiKey ? '****' + storedApiKey.slice(-4) : 'none');
+    
+    if (storedApiKey) {
+      const apiKeyInput = document.getElementById('apiKey');
+      if (apiKeyInput) {
+        console.log('Found apiKey input element, setting value...');
+        apiKeyInput.value = storedApiKey;
+        console.log('API key loaded from localStorage');
+      } else {
+        console.error('apiKey input element not found');
+      }
     }
+  } catch (error) {
+    console.error('Error loading API key from localStorage:', error);
+  }
+}
+
+// 存储API key到localStorage
+function saveApiKeyToStorage(apiKey) {
+  console.log('=== Saving API key to localStorage ===');
+  try {
+    if (apiKey) {
+      localStorage.setItem('pollinationsApiKey', apiKey);
+      console.log('API key stored in localStorage:', '****' + apiKey.slice(-4));
+    }
+  } catch (error) {
+    console.error('Error saving API key to localStorage:', error);
   }
 }
 
 // 页面加载时先从localStorage加载API key，然后检查URL哈希中的API key
 window.addEventListener('DOMContentLoaded', function() {
+  console.log('=== DOMContentLoaded event fired ===');
   loadApiKeyFromStorage();
   checkForApiKey();
 });
@@ -427,12 +446,39 @@ window.addEventListener('hashchange', checkForApiKey);
 // 当用户输入API key时，也存储到localStorage
 const apiKeyInput = document.getElementById('apiKey');
 if (apiKeyInput) {
+  console.log('=== Found apiKey input element, adding event listeners ===');
+  
+  // 添加change事件监听器
   apiKeyInput.addEventListener('change', function() {
     const apiKey = this.value;
-    if (apiKey) {
-      localStorage.setItem('pollinationsApiKey', apiKey);
-      console.log('API key stored in localStorage');
-    }
+    console.log('=== Change event fired, API key:', apiKey ? '****' + apiKey.slice(-4) : 'empty');
+    saveApiKeyToStorage(apiKey);
+  });
+  
+  // 添加keyup事件监听器，确保用户输入时也能存储
+  apiKeyInput.addEventListener('keyup', function() {
+    const apiKey = this.value;
+    console.log('=== Keyup event fired, API key:', apiKey ? '****' + apiKey.slice(-4) : 'empty');
+    saveApiKeyToStorage(apiKey);
+  });
+  
+  // 添加blur事件监听器，确保焦点离开时也能存储
+  apiKeyInput.addEventListener('blur', function() {
+    const apiKey = this.value;
+    console.log('=== Blur event fired, API key:', apiKey ? '****' + apiKey.slice(-4) : 'empty');
+    saveApiKeyToStorage(apiKey);
+  });
+} else {
+  console.error('=== apiKey input element not found ===');
+}
+
+// 检查测试API按钮，确保点击时也能存储API key
+const testApiBtn = document.getElementById('testApi');
+if (testApiBtn) {
+  testApiBtn.addEventListener('click', function() {
+    const apiKey = document.getElementById('apiKey').value;
+    console.log('=== Test API button clicked, API key:', apiKey ? '****' + apiKey.slice(-4) : 'empty');
+    saveApiKeyToStorage(apiKey);
   });
 }
 
