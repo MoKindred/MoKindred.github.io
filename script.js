@@ -345,9 +345,21 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 });
 
 document.getElementById('getApiKey').addEventListener('click', () => {
-  const redirectUrl = encodeURIComponent(window.location.href);
-  window.open(`https://enter.pollinations.ai/authorize?redirect_url=https://mokindred.github.io/`, '_blank');
+  window.open('https://enter.pollinations.ai/authorize?redirect_url=https://mokindred.github.io&app_key=pk_rgbhWzNY9Zp3nBU9', '_blank');
 });
+
+// 检查URL哈希中是否包含API key
+function checkForApiKey() {
+  const apiKey = new URLSearchParams(location.hash.slice(1)).get('api_key');
+  if (apiKey) {
+    document.getElementById('apiKey').value = apiKey;
+    // 自动测试API连接
+    document.getElementById('testApi').click();
+  }
+}
+
+// 页面加载时检查API key
+window.addEventListener('DOMContentLoaded', checkForApiKey);
 
 let allModelsMetadata = {
   text: {},
