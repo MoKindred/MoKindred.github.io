@@ -445,6 +445,19 @@ window.addEventListener('DOMContentLoaded', function() {
 // 页面哈希变化时也检查API key
 window.addEventListener('hashchange', checkForApiKey);
 
+// 为随机种子按钮添加事件监听器
+const randomSeedBtn = document.getElementById('random-seed');
+if (randomSeedBtn) {
+  randomSeedBtn.addEventListener('click', function() {
+    // 生成一个1到999999之间的随机数作为种子值
+    const randomSeed = Math.floor(Math.random() * 999999) + 1;
+    const imageSeedInput = document.getElementById('image-seed');
+    if (imageSeedInput) {
+      imageSeedInput.value = randomSeed;
+    }
+  });
+}
+
 // 当用户输入API key时，也存储到localStorage
 const apiKeyInput = document.getElementById('apiKey');
 if (apiKeyInput) {
