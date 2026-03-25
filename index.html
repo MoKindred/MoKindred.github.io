@@ -1691,7 +1691,12 @@ footer a:last-child:hover::before {
           </div>
           <div class="param-item">
             <label data-lang-key="seed_label">种子值</label>
-            <input type="number" id="image-seed" placeholder="留空为随机">
+            <div style="display: flex; align-items: center;">
+              <input type="number" id="image-seed" placeholder="留空为随机" style="flex: 1;">
+              <button type="button" id="random-seed" style="margin-left: 8px; padding: 8px; background: var(--p-gradient); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+                🎲
+              </button>
+            </div>
           </div>
           <div class="param-item" style="display: flex; align-items: center; gap: 12px;">
             <label data-lang-key="enhance_label">增强</label>
